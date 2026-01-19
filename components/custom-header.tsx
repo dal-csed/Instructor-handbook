@@ -6,7 +6,7 @@ const CustomHeader = () => {
     <div className="w-full h-24">
       <div className="flex px-3 flex-row items-center justify-between gap-4 m-auto max-w-7xl h-full">
         <div className="h-14 w-50 relative">
-          <Image src="/dal-logo.jpg" alt="Dalhousie University" fill />
+          <Image src="/dal-logo.png" alt="Dalhousie University" fill />
         </div>
         <p className="title-page text-[#474646] text-4xl font-semibold">Instructor Handbook</p>
 

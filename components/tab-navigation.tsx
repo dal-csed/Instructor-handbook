@@ -6,8 +6,9 @@ import { cn } from "@/lib/utils"
 
 const tabs = [
   { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Services", href: "/services" },
+  { name: "Onboarding", href: "/onboarding" },
+  { name: "Educational posters and infographics", href: "/services" },
+  { name: "Syllabus Generator", href: "/syllabus" },
   { name: "Resources", href: "/resources" },
   { name: "Contact", href: "/contact" },
 ]
