@@ -17,7 +17,7 @@ export default function FlyoutLink({ children, href, FlyoutContent }: FlyoutLink
 
   return (
     <div onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} className="relative">
-      <a href={href} className="font-semibold py-2 px-3 hover:border-b-2 hover:mb-[-2] hover:border-[#ffcc00]">
+      <a href={href} className=" font-medium py-2 px-3 hover:border-b-2 hover:mb-[-2] hover:border-[#ffcc00]">
         {children}
       </a>
       <AnimatePresence>

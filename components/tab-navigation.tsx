@@ -17,7 +17,7 @@ export default function TabNavigation() {
   const pathname = usePathname()
 
   return (
-    <nav className="bg-gray-100 border-b border-gray-200">
+    <nav className="border-b border-[#242424]">
       <div className="max-w-7xl mx-auto px-3">
         <div className="flex gap-1">
           {tabs.map((tab) => {
@@ -27,9 +27,9 @@ export default function TabNavigation() {
                 key={tab.href}
                 href={tab.href}
                 className={cn(
-                  "px-6 py-3 text-sm font-medium transition-colors relative",
+                  "px-2 font-semibold mr-3 py-2 transition-colors relative",
                   isActive
-                    ? "text-[#474646] bg-white border-t-2 border-[#ffcc00]"
+                    ? "text-white rounded-t-xs bg-[#242424]"
                     : "text-gray-600 hover:text-[#474646] hover:bg-gray-50",
                 )}
               >
