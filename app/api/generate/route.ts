@@ -719,6 +719,81 @@ export async function POST(req: NextRequest) {
       sections.push(...topicsContent);
     }
 
+    // Policies
+    if (data.policies) {
+      const hasPolicies =
+        data.policies.attendancePolicy ||
+        data.policies.lateSubmissionPolicy ||
+        data.policies.academicIntegrityPolicy ||
+        data.policies.customPolicy;
+
+      if (hasPolicies) {
+        sections.push(
+          new Paragraph({
+            text: "Course Policies",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          })
+        );
+
+        if (data.policies.attendancePolicy) {
+          sections.push(
+            new Paragraph({
+              children: [new TextRun({ text: "Attendance Policy", bold: true })],
+              spacing: { before: 120, after: 60 },
+            }),
+            new Paragraph({
+              text: "Regular attendance is expected. Students are allowed up to 3 absences without penalty. Additional absences may affect your final grade.",
+              spacing: { after: 120 },
+            })
+          );
+        }
+
+        if (data.policies.lateSubmissionPolicy) {
+          sections.push(
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Late Submission Policy", bold: true }),
+              ],
+              spacing: { before: 120, after: 60 },
+            }),
+            new Paragraph({
+              text: "Late assignments will be accepted with a 10% penalty per day, up to 3 days. After 3 days, assignments will not be accepted without prior arrangement.",
+              spacing: { after: 120 },
+            })
+          );
+        }
+
+        if (data.policies.academicIntegrityPolicy) {
+          sections.push(
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Academic Integrity Policy", bold: true }),
+              ],
+              spacing: { before: 120, after: 60 },
+            }),
+            new Paragraph({
+              text: "All work submitted must be your own. Plagiarism and cheating will result in a zero on the assignment and may lead to further disciplinary action per university policy.",
+              spacing: { after: 120 },
+            })
+          );
+        }
+
+        if (data.policies.customPolicy) {
+          sections.push(
+            new Paragraph({
+              children: [new TextRun({ text: "Custom Policy", bold: true })],
+              spacing: { before: 120, after: 60 },
+            }),
+            new Paragraph({
+              text: data.policies.customPolicy,
+              spacing: { after: 120 },
+            })
+          );
+        }
+      }
+    }
+
     // Assignments
     if (data.assignments && data.assignments.length > 0) {
       sections.push(
