@@ -721,76 +721,252 @@ export async function POST(req: NextRequest) {
 
     // Policies
     if (data.policies) {
-      const hasPolicies =
-        data.policies.attendancePolicy ||
-        data.policies.lateSubmissionPolicy ||
-        data.policies.academicIntegrityPolicy ||
-        data.policies.customPolicy;
-
-      if (hasPolicies) {
+      if (data.policies.universityStatements) {
         sections.push(
           new Paragraph({
-            text: "Course Policies",
+            text: "University Statements",
             heading: HeadingLevel.HEADING_2,
             spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "This course is governed by the academic rules and regulations set forth in the University Calendar and the Senate.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Academic Calendars", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Territorial Acknowledgement", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Dalhousie University is located in Mi'kma'ki, the ancestral and unceded territory of the Mi'kmaq. We are all Treaty people.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Internationalization", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "At Dalhousie, 'thinking and acting globally' enhances the quality and impact of education, supporting learning that is interdisciplinary, cross-cultural, global in reach, and orientated toward solving problems that extend across national borders. (read more: International Centre)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Academic Integrity", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "At Dalhousie University, we are guided in all of our work by the values of academic integrity: honesty, trust, fairness, responsibility and respect. As a student, you are required to demonstrate these values in all of the work you do. The University provides policies and procedures that every member of the university community is required to follow to ensure academic integrity. (read more: Academic Integrity)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Accessibility", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "The Student Accessibility Centre is Dalhousie's centre of expertise for matters related to student accessibility and accommodation. If there are aspects of the design, instruction, and/or experiences within this course (online or in-person) that result in barriers to your inclusion please contact the Student Accessibility Centre for all courses offered by Dalhousie with the exception of Truro.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Conduct in the Classroom — Culture of Respect", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Substantial and constructive dialogue on challenging issues is an important part of academic inquiry and exchange. It requires willingness to listen and tolerance of opposing points of view. Consideration of individual differences and alternative viewpoints is required of all class members, towards each other, towards instructors, and towards guest speakers. While expressions of differing perspectives are welcome and encouraged, the words and language used should remain within acceptable bounds of civility and respect.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Diversity and Inclusion — Culture of Respect", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Every person at Dalhousie has a right to be respected and safe. We believe inclusiveness is fundamental to education. We stand for equality. Dalhousie is strengthened in our diversity. We are a respectful and inclusive community. We are committed to being a place where everyone feels welcome and supported, which is why our Strategic Direction prioritizes fostering a culture of diversity and inclusiveness (Strategic Priority 5.2). (read more: Office for Equity and Inclusion and the FCS Culture of Respect CoReCS)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Student Code of Conduct", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Everyone at Dalhousie is expected to treat others with dignity and respect. The Code of Student Conduct allows Dalhousie to take disciplinary action if students don't follow this community expectation. When appropriate, violations of the code can be resolved in a reasonable and informal manner—perhaps through a restorative justice process. If an informal resolution can't be reached, or would be inappropriate, procedures exist for formal dispute resolution. (read more: Code of Student Conduct)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Fair Dealing Policy", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "The Dalhousie University Fair Dealing Policy provides guidance for the limited use of copyright protected material without the risk of infringement and without having to seek the permission of copyright owners. It is intended to provide a balance between the rights of creators and the rights of users at Dalhousie. (read more: Fair Dealing Policy)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Originality Checking Software", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "The course instructor may use Dalhousie's approved originality checking software and Google to check the originality of any work submitted for credit, in accordance with the Student Submission of Assignments and Use of Originality Checking Software Policy. Students are free, without penalty of grade, to choose an alternative method of attesting to the authenticity of their work, and must inform the instructor no later than the last day to add/drop classes of their intent to choose an alternate method. (read more: Policy on Student Submission of Assignments and Use of Originality Checking Software)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Student Use of Course Materials", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "These course materials are designed for use as part of the CSCI courses at Dalhousie University and are the property of the instructor unless otherwise stated. Third party copyrighted materials (such as books, journal articles, music, videos, etc.) have either been licensed for use in this course or fall under an exception or limitation in Canadian Copyright law. Copying this course material for distribution (e.g., uploading material to a commercial third party website) may lead to a violation of Copyright law.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Learning and Support Resources", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Please see the Academic Support website.",
+            spacing: { after: 120 },
           })
         );
+      }
 
-        if (data.policies.attendancePolicy) {
-          sections.push(
-            new Paragraph({
-              children: [new TextRun({ text: "Attendance Policy", bold: true })],
-              spacing: { before: 120, after: 60 },
-            }),
-            new Paragraph({
-              text: "Regular attendance is expected. Students are allowed up to 3 absences without penalty. Additional absences may affect your final grade.",
-              spacing: { after: 120 },
-            })
-          );
-        }
+      if (data.policies.speakUpPolicy) {
+        sections.push(
+          new Paragraph({
+            text: "What We All Need to Do",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "1. Be Ready to Act:", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "This starts with promising yourself to speak up to help prevent it from happening again. Whatever it takes, summon your courage to address the issue. Try to approach the issue with open-ended questions like \"Why did you say that?\" or \"How did you develop that belief?\"",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "2. Identify the Behaviour:", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Use reflective listening and avoid labeling, name-calling, or assigning blame to the person. Focus the conversation on the behaviour, not on the person. For example, \"The comment you just made sounded racist, is that what you intended?\" is a better approach than \"You're a racist if you make comments like that.\"",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "3. Appeal to Principles:", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "This can work well if the person is known to you, like a friend, sibling, or co-worker. For example, \"I have always thought of you as a fair-minded person, so it shocks me when I hear you say something like that.\"",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "4. Set Limits:", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "You cannot control another person's actions, but you can control what happens in your space. Do not be afraid to ask someone \"Please do not tell racist jokes in my presence anymore\" or state \"This classroom is not a place where I allow homophobia to occur.\" After you have set that expectation, make sure you consistently maintain it.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "5. Find or be an Ally:", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Seek out like-minded people that support your views, and help support others in their challenges. Leading by example can be a powerful way to inspire others to do the same.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "6. Be Vigilant:", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Change can happen slowly, but do not let this deter you. Stay prepared, keep speaking up, and do not let yourself be silenced.",
+            spacing: { after: 120 },
+          })
+        );
+      }
 
-        if (data.policies.lateSubmissionPolicy) {
-          sections.push(
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Late Submission Policy", bold: true }),
-              ],
-              spacing: { before: 120, after: 60 },
-            }),
-            new Paragraph({
-              text: "Late assignments will be accepted with a 10% penalty per day, up to 3 days. After 3 days, assignments will not be accepted without prior arrangement.",
-              spacing: { after: 120 },
-            })
-          );
-        }
+      if (data.policies.cultureOfRespect) {
+        sections.push(
+          new Paragraph({
+            text: "Culture of Respect",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "Every person has a right to respect and safety. We believe inclusiveness is fundamental to education and learning. Misogyny and other disrespectful behaviour in our classrooms, on our campus, on social media, and in our community is unacceptable. As a community, we must stand for equality and hold ourselves to a higher standard.",
+            spacing: { after: 120 },
+          })
+        );
+      }
 
-        if (data.policies.academicIntegrityPolicy) {
-          sections.push(
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Academic Integrity Policy", bold: true }),
-              ],
-              spacing: { before: 120, after: 60 },
-            }),
-            new Paragraph({
-              text: "All work submitted must be your own. Plagiarism and cheating will result in a zero on the assignment and may lead to further disciplinary action per university policy.",
-              spacing: { after: 120 },
-            })
-          );
-        }
+      if (data.policies.studentHealthWellness) {
+        sections.push(
+          new Paragraph({
+            text: "Student Health and Wellness",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "Taking care of your health is important. As a Dalhousie student, you have access to a wide range of resources to support your health and wellbeing. Students looking to access physical or mental health and wellness services at Dalhousie can go to the Student Health and Wellness Centre in the LeMarchant Building. The team includes: registered nurses, doctors, counsellors and a social worker. Visit Student Health and Wellness to learn more and book an appointment today. Students also have access to a variety of online mental health resources, including telephone/texting counselling and workshops/training programs. Learn more and access these resources at Mental Health Services.",
+            spacing: { after: 120 },
+          })
+        );
+      }
 
-        if (data.policies.customPolicy) {
-          sections.push(
-            new Paragraph({
-              children: [new TextRun({ text: "Custom Policy", bold: true })],
-              spacing: { before: 120, after: 60 },
-            }),
-            new Paragraph({
-              text: data.policies.customPolicy,
-              spacing: { after: 120 },
-            })
-          );
-        }
+      if (data.policies.artificialIntelligence) {
+        sections.push(
+          new Paragraph({
+            text: "Use of Artificial Intelligence Tools",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "You may use AI-driven tools to assist you in learning but remember that your objective is to understand, achieve, and apply the course competencies and outcomes. While you may use tools for learning, specific assessments in this course will disallow the use of AI-driven tools to assert that you have attained course learning outcomes. This is because a graduate must be able to analyze, assess and produce work unassisted by AI technology. Where tools are allowed: you must acknowledge all tools used to assist you. If applicable, you must provide links to chat logs. Using AI-driven tools where prohibited constitutes an academic offense.",
+            spacing: { after: 120 },
+          })
+        );
+      }
+
+      if (data.policies.plagiarismDetection) {
+        sections.push(
+          new Paragraph({
+            text: "Use of Plagiarism Detection Software",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "All submitted code may be passed through a plagiarism detection software, such as the plagiarism detector embedded in Codio, the Moss Software Similarity Detection System, or similar systems. If a student does not wish to have their assignments passed through plagiarism detection software, they should contact the instructor for an alternative. Please note, that code not passed through plagiarism detection software will necessarily receive closer scrutiny. See the Policy on Student Submission of Assignments and Use of Originality Checking Software for more information.",
+            spacing: { after: 120 },
+          })
+        );
+      }
+
+      if (data.policies.responsibleComputing) {
+        sections.push(
+          new Paragraph({
+            text: "Responsible Computing Policy",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "Usage of all computing resources in the Faculty of Computer Science must be within the Dalhousie Acceptable Use Policies, and the Faculty of Computer Science Responsible Computing Policy.",
+            spacing: { after: 120 },
+          })
+        );
+      }
+
+      if (data.policies.customPolicy) {
+        sections.push(
+          new Paragraph({
+            text: "Custom Policy",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: data.policies.customPolicy,
+            spacing: { after: 120 },
+          })
+        );
       }
     }
 

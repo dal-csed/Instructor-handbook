@@ -16,7 +16,6 @@ import {
 import { Plus, Trash2, FileDown } from "lucide-react";
 import { RichTextEditor } from "@/components/rich-text-editor";
 
-
 interface TA {
   name: string;
   email: string;
@@ -35,9 +34,13 @@ interface EvaluationItem {
 }
 
 interface Policies {
-  attendancePolicy: boolean;
-  lateSubmissionPolicy: boolean;
-  academicIntegrityPolicy: boolean;
+  universityStatements: boolean;
+  speakUpPolicy: boolean;
+  cultureOfRespect: boolean;
+  studentHealthWellness: boolean;
+  artificialIntelligence: boolean;
+  plagiarismDetection: boolean;
+  responsibleComputing: boolean;
   customPolicy: string;
 }
 
@@ -71,9 +74,13 @@ export default function SyllabusGenerator() {
 
   // Policies
   const [policies, setPolicies] = useState<Policies>({
-    attendancePolicy: false,
-    lateSubmissionPolicy: false,
-    academicIntegrityPolicy: false,
+    universityStatements: false,
+    speakUpPolicy: false,
+    cultureOfRespect: false,
+    studentHealthWellness: false,
+    artificialIntelligence: false,
+    plagiarismDetection: false,
+    responsibleComputing: false,
     customPolicy: "",
   });
 
@@ -122,7 +129,7 @@ export default function SyllabusGenerator() {
   const updateAssignment = (
     index: number,
     field: keyof Assignment,
-    value: string
+    value: string,
   ) => {
     const newAssignments = [...assignments];
     newAssignments[index][field] = value;
@@ -145,7 +152,7 @@ export default function SyllabusGenerator() {
   const updateEvaluationItem = (
     index: number,
     field: keyof EvaluationItem,
-    value: string
+    value: string,
   ) => {
     const newItems = [...evaluationCriteria];
     newItems[index][field] = value;
@@ -174,7 +181,7 @@ export default function SyllabusGenerator() {
         course_mail_list: courseMailList,
         tas: tas.filter((ta) => ta.name || ta.email),
         assignments: assignments.filter(
-          (a) => a.title || a.date || a.description
+          (a) => a.title || a.date || a.description,
         ),
         important_dates: importantDates,
         course_description: courseDescription,
@@ -182,7 +189,7 @@ export default function SyllabusGenerator() {
         course_rationale: courseRationale,
         class_format: classFormat,
         evaluation_criteria: evaluationCriteria.filter(
-          (item) => item.name || item.percentage || item.description
+          (item) => item.name || item.percentage || item.description,
         ),
         policies,
         notes,
@@ -220,7 +227,7 @@ export default function SyllabusGenerator() {
     } catch (error) {
       console.error("[v0] Error generating syllabus:", error);
       alert(
-        "Failed to generate syllabus. Please check your inputs and try again."
+        "Failed to generate syllabus. Please check your inputs and try again.",
       );
     } finally {
       setIsGenerating(false);
@@ -486,9 +493,7 @@ export default function SyllabusGenerator() {
               <CardTitle className="text-foreground">
                 Course Rationale
               </CardTitle>
-              <CardDescription>
-                Why this course is important
-              </CardDescription>
+              <CardDescription>Why this course is important</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
@@ -507,9 +512,7 @@ export default function SyllabusGenerator() {
               <CardTitle className="text-foreground">
                 Class Format and Course Communication
               </CardTitle>
-              <CardDescription>
-                How the class will be conducted
-              </CardDescription>
+              <CardDescription>How the class will be conducted</CardDescription>
             </CardHeader>
             <CardContent>
               <RichTextEditor
@@ -526,9 +529,7 @@ export default function SyllabusGenerator() {
               <CardTitle className="text-foreground">
                 Evaluation Criteria
               </CardTitle>
-              <CardDescription>
-                How students will be evaluated
-              </CardDescription>
+              <CardDescription>How students will be evaluated</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {evaluationCriteria.map((item, index) => (
@@ -547,7 +548,7 @@ export default function SyllabusGenerator() {
                               updateEvaluationItem(
                                 index,
                                 "name",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             placeholder="Assignments"
@@ -564,7 +565,7 @@ export default function SyllabusGenerator() {
                               updateEvaluationItem(
                                 index,
                                 "percentage",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             placeholder="40%"
@@ -582,7 +583,7 @@ export default function SyllabusGenerator() {
                             updateEvaluationItem(
                               index,
                               "description",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="Details about this evaluation component..."
@@ -627,75 +628,187 @@ export default function SyllabusGenerator() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="attendance-policy"
-                    checked={policies.attendancePolicy}
+                    id="speak-up-policy"
+                    checked={policies.speakUpPolicy}
                     onCheckedChange={(checked) =>
-                      updatePolicy("attendancePolicy", checked as boolean)
+                      updatePolicy("speakUpPolicy", checked as boolean)
                     }
                   />
                   <label
-                    htmlFor="attendance-policy"
+                    htmlFor="speak-up-policy"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Attendance Policy
+                    What We All Need to Do
                   </label>
                 </div>
-                {policies.attendancePolicy && (
+                {policies.speakUpPolicy && (
+                  <div className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md space-y-2 max-h-60 overflow-y-auto">
+                    <p className="font-semibold">
+                      This section includes guidelines for creating a respectful
+                      environment:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      <li>Be Ready to Act</li>
+                      <li>Identify the Behaviour</li>
+                      <li>Appeal to Principles</li>
+                      <li>Set Limits</li>
+                      <li>Find or be an Ally</li>
+                      <li>Be Vigilant</li>
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="culture-of-respect"
+                    checked={policies.cultureOfRespect}
+                    onCheckedChange={(checked) =>
+                      updatePolicy("cultureOfRespect", checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="culture-of-respect"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Culture of Respect
+                  </label>
+                </div>
+                {policies.cultureOfRespect && (
                   <p className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md">
-                    [Placeholder] Regular attendance is expected. Students are allowed up to 3 absences without penalty. Additional absences may affect your final grade.
+                    Every person has a right to respect and safety. We believe
+                    inclusiveness is fundamental to education and learning.
                   </p>
                 )}
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="late-submission-policy"
-                    checked={policies.lateSubmissionPolicy}
+                    id="student-health-wellness"
+                    checked={policies.studentHealthWellness}
                     onCheckedChange={(checked) =>
-                      updatePolicy("lateSubmissionPolicy", checked as boolean)
+                      updatePolicy("studentHealthWellness", checked as boolean)
                     }
                   />
                   <label
-                    htmlFor="late-submission-policy"
+                    htmlFor="student-health-wellness"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Late Submission Policy
+                    Student Health and Wellness
                   </label>
                 </div>
-                {policies.lateSubmissionPolicy && (
+                {policies.studentHealthWellness && (
                   <p className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md">
-                    [Placeholder] Late assignments will be accepted with a 10% penalty per day, up to 3 days. After 3 days, assignments will not be accepted without prior arrangement.
+                    Information about health and wellness resources available to
+                    students.
                   </p>
                 )}
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="academic-integrity-policy"
-                    checked={policies.academicIntegrityPolicy}
+                    id="artificial-intelligence"
+                    checked={policies.artificialIntelligence}
                     onCheckedChange={(checked) =>
-                      updatePolicy(
-                        "academicIntegrityPolicy",
-                        checked as boolean
-                      )
+                      updatePolicy("artificialIntelligence", checked as boolean)
                     }
                   />
                   <label
-                    htmlFor="academic-integrity-policy"
+                    htmlFor="artificial-intelligence"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Academic Integrity Policy
+                    Use of Artificial Intelligence Tools
                   </label>
                 </div>
-                {policies.academicIntegrityPolicy && (
+                {policies.artificialIntelligence && (
                   <p className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md">
-                    [Placeholder] All work submitted must be your own. Plagiarism and cheating will result in a zero on the assignment and may lead to further disciplinary action per university policy.
+                    Guidelines for using AI-driven tools in coursework and
+                    assessments.
                   </p>
+                )}
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="plagiarism-detection"
+                    checked={policies.plagiarismDetection}
+                    onCheckedChange={(checked) =>
+                      updatePolicy("plagiarismDetection", checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="plagiarism-detection"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Use of Plagiarism Detection Software
+                  </label>
+                </div>
+                {policies.plagiarismDetection && (
+                  <p className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md">
+                    Information about plagiarism detection software used for
+                    submitted work.
+                  </p>
+                )}
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="responsible-computing"
+                    checked={policies.responsibleComputing}
+                    onCheckedChange={(checked) =>
+                      updatePolicy("responsibleComputing", checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="responsible-computing"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Responsible Computing Policy
+                  </label>
+                </div>
+                {policies.responsibleComputing && (
+                  <p className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md">
+                    Computing resource usage policy within the Faculty of
+                    Computer Science.
+                  </p>
+                )}
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="university-statements"
+                    checked={policies.universityStatements}
+                    onCheckedChange={(checked) =>
+                      updatePolicy("universityStatements", checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="university-statements"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    University Statements
+                  </label>
+                </div>
+                {policies.universityStatements && (
+                  <div className="text-sm text-muted-foreground ml-6 p-3 bg-muted/50 rounded-md space-y-2 max-h-60 overflow-y-auto">
+                    <p className="font-semibold">
+                      This section includes the following university policies
+                      and statements:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      <li>Academic Rules and Regulations</li>
+                      <li>Territorial Acknowledgement</li>
+                      <li>Internationalization</li>
+                      <li>Academic Integrity</li>
+                      <li>Accessibility</li>
+                      <li>Conduct in the Classroom — Culture of Respect</li>
+                      <li>Diversity and Inclusion — Culture of Respect</li>
+                      <li>Student Code of Conduct</li>
+                      <li>Fair Dealing Policy</li>
+                      <li>Originality Checking Software</li>
+                      <li>Student Use of Course Materials</li>
+                      <li>Learning and Support Resources</li>
+                    </ul>
+                  </div>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="custom-policy">
-                  Custom Policy (Optional)
-                </Label>
+                <Label htmlFor="custom-policy">Custom Policy (Optional)</Label>
                 <Textarea
                   id="custom-policy"
                   value={policies.customPolicy}
