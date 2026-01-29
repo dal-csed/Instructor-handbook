@@ -721,111 +721,6 @@ export async function POST(req: NextRequest) {
 
     // Policies
     if (data.policies) {
-      if (data.policies.universityStatements) {
-        sections.push(
-          new Paragraph({
-            text: "University Statements",
-            heading: HeadingLevel.HEADING_2,
-            spacing: { before: 240, after: 120 },
-          }),
-          new Paragraph({
-            text: "This course is governed by the academic rules and regulations set forth in the University Calendar and the Senate.",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Academic Calendars", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Territorial Acknowledgement", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "Dalhousie University is located in Mi'kma'ki, the ancestral and unceded territory of the Mi'kmaq. We are all Treaty people.",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Internationalization", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "At Dalhousie, 'thinking and acting globally' enhances the quality and impact of education, supporting learning that is interdisciplinary, cross-cultural, global in reach, and orientated toward solving problems that extend across national borders. (read more: International Centre)",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Academic Integrity", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "At Dalhousie University, we are guided in all of our work by the values of academic integrity: honesty, trust, fairness, responsibility and respect. As a student, you are required to demonstrate these values in all of the work you do. The University provides policies and procedures that every member of the university community is required to follow to ensure academic integrity. (read more: Academic Integrity)",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Accessibility", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "The Student Accessibility Centre is Dalhousie's centre of expertise for matters related to student accessibility and accommodation. If there are aspects of the design, instruction, and/or experiences within this course (online or in-person) that result in barriers to your inclusion please contact the Student Accessibility Centre for all courses offered by Dalhousie with the exception of Truro.",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Conduct in the Classroom — Culture of Respect", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "Substantial and constructive dialogue on challenging issues is an important part of academic inquiry and exchange. It requires willingness to listen and tolerance of opposing points of view. Consideration of individual differences and alternative viewpoints is required of all class members, towards each other, towards instructors, and towards guest speakers. While expressions of differing perspectives are welcome and encouraged, the words and language used should remain within acceptable bounds of civility and respect.",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Diversity and Inclusion — Culture of Respect", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "Every person at Dalhousie has a right to be respected and safe. We believe inclusiveness is fundamental to education. We stand for equality. Dalhousie is strengthened in our diversity. We are a respectful and inclusive community. We are committed to being a place where everyone feels welcome and supported, which is why our Strategic Direction prioritizes fostering a culture of diversity and inclusiveness (Strategic Priority 5.2). (read more: Office for Equity and Inclusion and the FCS Culture of Respect CoReCS)",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Student Code of Conduct", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "Everyone at Dalhousie is expected to treat others with dignity and respect. The Code of Student Conduct allows Dalhousie to take disciplinary action if students don't follow this community expectation. When appropriate, violations of the code can be resolved in a reasonable and informal manner—perhaps through a restorative justice process. If an informal resolution can't be reached, or would be inappropriate, procedures exist for formal dispute resolution. (read more: Code of Student Conduct)",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Fair Dealing Policy", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "The Dalhousie University Fair Dealing Policy provides guidance for the limited use of copyright protected material without the risk of infringement and without having to seek the permission of copyright owners. It is intended to provide a balance between the rights of creators and the rights of users at Dalhousie. (read more: Fair Dealing Policy)",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Originality Checking Software", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "The course instructor may use Dalhousie's approved originality checking software and Google to check the originality of any work submitted for credit, in accordance with the Student Submission of Assignments and Use of Originality Checking Software Policy. Students are free, without penalty of grade, to choose an alternative method of attesting to the authenticity of their work, and must inform the instructor no later than the last day to add/drop classes of their intent to choose an alternate method. (read more: Policy on Student Submission of Assignments and Use of Originality Checking Software)",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Student Use of Course Materials", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "These course materials are designed for use as part of the CSCI courses at Dalhousie University and are the property of the instructor unless otherwise stated. Third party copyrighted materials (such as books, journal articles, music, videos, etc.) have either been licensed for use in this course or fall under an exception or limitation in Canadian Copyright law. Copying this course material for distribution (e.g., uploading material to a commercial third party website) may lead to a violation of Copyright law.",
-            spacing: { after: 120 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: "Learning and Support Resources", bold: true })],
-            spacing: { before: 100, after: 60 },
-          }),
-          new Paragraph({
-            text: "Please see the Academic Support website.",
-            spacing: { after: 120 },
-          })
-        );
-      }
 
       if (data.policies.speakUpPolicy) {
         sections.push(
@@ -950,6 +845,112 @@ export async function POST(req: NextRequest) {
           }),
           new Paragraph({
             text: "Usage of all computing resources in the Faculty of Computer Science must be within the Dalhousie Acceptable Use Policies, and the Faculty of Computer Science Responsible Computing Policy.",
+            spacing: { after: 120 },
+          })
+        );
+      }
+
+      if (data.policies.universityStatements) {
+        sections.push(
+          new Paragraph({
+            text: "University Statements",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          }),
+          new Paragraph({
+            text: "This course is governed by the academic rules and regulations set forth in the University Calendar and the Senate.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Academic Calendars", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Territorial Acknowledgement", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Dalhousie University is located in Mi'kma'ki, the ancestral and unceded territory of the Mi'kmaq. We are all Treaty people.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Internationalization", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "At Dalhousie, 'thinking and acting globally' enhances the quality and impact of education, supporting learning that is interdisciplinary, cross-cultural, global in reach, and orientated toward solving problems that extend across national borders. (read more: International Centre)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Academic Integrity", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "At Dalhousie University, we are guided in all of our work by the values of academic integrity: honesty, trust, fairness, responsibility and respect. As a student, you are required to demonstrate these values in all of the work you do. The University provides policies and procedures that every member of the university community is required to follow to ensure academic integrity. (read more: Academic Integrity)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Accessibility", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "The Student Accessibility Centre is Dalhousie's centre of expertise for matters related to student accessibility and accommodation. If there are aspects of the design, instruction, and/or experiences within this course (online or in-person) that result in barriers to your inclusion please contact the Student Accessibility Centre for all courses offered by Dalhousie with the exception of Truro.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Conduct in the Classroom — Culture of Respect", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Substantial and constructive dialogue on challenging issues is an important part of academic inquiry and exchange. It requires willingness to listen and tolerance of opposing points of view. Consideration of individual differences and alternative viewpoints is required of all class members, towards each other, towards instructors, and towards guest speakers. While expressions of differing perspectives are welcome and encouraged, the words and language used should remain within acceptable bounds of civility and respect.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Diversity and Inclusion — Culture of Respect", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Every person at Dalhousie has a right to be respected and safe. We believe inclusiveness is fundamental to education. We stand for equality. Dalhousie is strengthened in our diversity. We are a respectful and inclusive community. We are committed to being a place where everyone feels welcome and supported, which is why our Strategic Direction prioritizes fostering a culture of diversity and inclusiveness (Strategic Priority 5.2). (read more: Office for Equity and Inclusion and the FCS Culture of Respect CoReCS)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Student Code of Conduct", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Everyone at Dalhousie is expected to treat others with dignity and respect. The Code of Student Conduct allows Dalhousie to take disciplinary action if students don't follow this community expectation. When appropriate, violations of the code can be resolved in a reasonable and informal manner—perhaps through a restorative justice process. If an informal resolution can't be reached, or would be inappropriate, procedures exist for formal dispute resolution. (read more: Code of Student Conduct)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Fair Dealing Policy", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "The Dalhousie University Fair Dealing Policy provides guidance for the limited use of copyright protected material without the risk of infringement and without having to seek the permission of copyright owners. It is intended to provide a balance between the rights of creators and the rights of users at Dalhousie. (read more: Fair Dealing Policy)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Originality Checking Software", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "The course instructor may use Dalhousie's approved originality checking software and Google to check the originality of any work submitted for credit, in accordance with the Student Submission of Assignments and Use of Originality Checking Software Policy. Students are free, without penalty of grade, to choose an alternative method of attesting to the authenticity of their work, and must inform the instructor no later than the last day to add/drop classes of their intent to choose an alternate method. (read more: Policy on Student Submission of Assignments and Use of Originality Checking Software)",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Student Use of Course Materials", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "These course materials are designed for use as part of the CSCI courses at Dalhousie University and are the property of the instructor unless otherwise stated. Third party copyrighted materials (such as books, journal articles, music, videos, etc.) have either been licensed for use in this course or fall under an exception or limitation in Canadian Copyright law. Copying this course material for distribution (e.g., uploading material to a commercial third party website) may lead to a violation of Copyright law.",
+            spacing: { after: 120 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Learning and Support Resources", bold: true })],
+            spacing: { before: 100, after: 60 },
+          }),
+          new Paragraph({
+            text: "Please see the Academic Support website.",
             spacing: { after: 120 },
           })
         );
