@@ -1,27 +1,28 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const tabs = [
   { name: "Home", href: "/" },
   { name: "Onboarding", href: "/onboarding" },
   { name: "Educational posters and infographics", href: "/services" },
+  { name: "Tech Tips", href: "/techTips" },
   { name: "Syllabus Generator", href: "/syllabus" },
   { name: "Resources", href: "/resources" },
   { name: "Contact", href: "/contact" },
-]
+];
 
 export default function TabNavigation() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <nav className="border-b border-[#242424]">
       <div className="max-w-7xl mx-auto px-3">
         <div className="flex gap-1">
           {tabs.map((tab) => {
-            const isActive = pathname === tab.href
+            const isActive = pathname === tab.href;
             return (
               <Link
                 key={tab.href}
@@ -35,10 +36,10 @@ export default function TabNavigation() {
               >
                 {tab.name}
               </Link>
-            )
+            );
           })}
         </div>
       </div>
     </nav>
-  )
+  );
 }
