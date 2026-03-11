@@ -52,7 +52,7 @@ const TechTips = () => {
         <BasicAccordion 
           items={Items}
           allowMultiple
-          className="bg-background border"
+          className=""
         />
       </div>
     </div>

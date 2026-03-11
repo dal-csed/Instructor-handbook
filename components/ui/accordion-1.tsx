@@ -40,16 +40,16 @@ export default function BasicAccordion({
 
   return (
     <div
-      className={`flex w-full flex-col overflow-hidden rounded-lg border border-[#242424] divide-y divide-[#242424] ${className}`}
+      className={`flex w-full flex-col overflow-hidden space-y-3 ${className}`}
     >
       {items.map((item) => {
         const isExpanded = expandedItems.includes(item.id)
 
         return (
-          <div key={item.id} className="overflow-hidden">
+          <div key={item.id} className="overflow-hidden shadow-sm ">
             <button
               onClick={() => toggleItem(item.id)}
-              className={`group flex w-full items-center justify-between gap-2 px-4 py-3 text-left transition-colors duration-200
+              className={`group flex w-full items-center rounded-xs justify-between gap-2 px-4 py-3 text-left transition-colors duration-200
                 ${isExpanded
                   ? "bg-[#242424] text-[#FFFFFF]"
                   : "bg-[#FFFFFF] text-[#242424] hover:bg-[#FFD400] hover:text-[#242424]"
