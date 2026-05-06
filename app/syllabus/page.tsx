@@ -397,9 +397,9 @@ export default function SyllabusGenerator() {
             </CardHeader>
             <CardContent className="space-y-4">
               {tas.map((ta, index) => (
-                <div key={index} className="flex gap-4 items-start">
-                  <div className="flex-1 grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                <div key={index} className="flex-1">
+                  <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-center">
+                    <div className="space-y-2 w-full">
                       <Label htmlFor={`ta-name-${index}`}>TA Name</Label>
                       <Input
                         id={`ta-name-${index}`}
@@ -410,7 +410,7 @@ export default function SyllabusGenerator() {
                         placeholder="Jane Doe"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <Label htmlFor={`ta-email-${index}`}>TA Email</Label>
                       <Input
                         id={`ta-email-${index}`}
@@ -422,19 +422,25 @@ export default function SyllabusGenerator() {
                         placeholder="ta@university.edu"
                       />
                     </div>
+                    <div className="flex md:justify-end justify-center items-center">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => removeTA(index)}
+                        disabled={tas.length === 1}
+                        className="shrink-0 mt-5.5"
+                        aria-label="Remove TA"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => removeTA(index)}
-                    disabled={tas.length === 1}
-                    className="shrink-0 mt-8"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               ))}
+  
+
+
               <Button
                 type="button"
                 variant="outline"
@@ -444,6 +450,7 @@ export default function SyllabusGenerator() {
                 <Plus className="h-4 w-4 mr-2" />
                 Add Teaching Assistant
               </Button>
+
             </CardContent>
           </Card>
 
@@ -533,77 +540,77 @@ export default function SyllabusGenerator() {
             </CardHeader>
             <CardContent className="space-y-4">
               {evaluationCriteria.map((item, index) => (
-                <div key={index}>
-                  <div className="flex gap-4 items-start mb-4">
-                    <div className="flex-1 space-y-4">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor={`eval-name-${index}`}>
-                            Component Name
-                          </Label>
-                          <Input
-                            id={`eval-name-${index}`}
-                            value={item.name}
-                            onChange={(e) =>
-                              updateEvaluationItem(
-                                index,
-                                "name",
-                                e.target.value,
-                              )
-                            }
-                            placeholder="Assignments"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor={`eval-percentage-${index}`}>
-                            Percentage
-                          </Label>
-                          <Input
-                            id={`eval-percentage-${index}`}
-                            value={item.percentage}
-                            onChange={(e) =>
-                              updateEvaluationItem(
-                                index,
-                                "percentage",
-                                e.target.value,
-                              )
-                            }
-                            placeholder="40%"
-                          />
-                        </div>
-                      </div>
+                <div key={index} className="mb-4">
+                  <div className="flex-1 space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor={`eval-description-${index}`}>
-                          Description
+                        <Label htmlFor={`eval-name-${index}`}>
+                          Component Name
                         </Label>
-                        <Textarea
-                          id={`eval-description-${index}`}
-                          value={item.description}
+                        <Input
+                          id={`eval-name-${index}`}
+                          value={item.name}
                           onChange={(e) =>
                             updateEvaluationItem(
                               index,
-                              "description",
+                              "name",
                               e.target.value,
                             )
                           }
-                          placeholder="Details about this evaluation component..."
-                          rows={2}
+                          placeholder="Assignments"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`eval-percentage-${index}`}>
+                          Percentage
+                        </Label>
+                        <Input
+                          id={`eval-percentage-${index}`}
+                          value={item.percentage}
+                          onChange={(e) =>
+                            updateEvaluationItem(
+                              index,
+                              "percentage",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="40%"
                         />
                       </div>
                     </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => removeEvaluationItem(index)}
-                      disabled={evaluationCriteria.length === 1}
-                      className="shrink-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="space-y-2">
+                      <Label htmlFor={`eval-description-${index}`}>
+                        Description
+                      </Label>
+                      <Textarea
+                        id={`eval-description-${index}`}
+                        value={item.description}
+                        onChange={(e) =>
+                          updateEvaluationItem(
+                            index,
+                            "description",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="Details about this evaluation component..."
+                        rows={2}
+                      />
+                    </div>
+                    <div className="flex justify-center mt-2">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => removeEvaluationItem(index)}
+                        disabled={evaluationCriteria.length === 1}
+                        className="mb-5"
+                      >
+                        Remove Component
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
+
               <Button
                 type="button"
                 variant="outline"

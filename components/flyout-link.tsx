@@ -49,7 +49,6 @@ export const QRContent = () => {
 
       <div className="flex flex-col items-center">
         <img src="/feedback-qrCode.png" alt="QR Code" className="mx-auto h-30 w-30" />
-
         <a
           href="https://forms.cloud.microsoft/r/z9E1L2QgN8"
           target="_blank"
