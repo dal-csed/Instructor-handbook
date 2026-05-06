@@ -602,11 +602,12 @@ export default function SyllabusGenerator() {
                         variant="destructive"
                         onClick={() => removeEvaluationItem(index)}
                         disabled={evaluationCriteria.length === 1}
-                        className="mb-5"
+                        className="mb-3"
                       >
                         Remove Component
                       </Button>
                     </div>
+                    <hr className="border-t border-neutral-400 mb-8" />
                   </div>
                 </div>
               ))}
