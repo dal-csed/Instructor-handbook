@@ -56,7 +56,7 @@ function convertHtmlToDocx(html: string): Paragraph[] {
           "[v0] List item found - indent:",
           indentLevel,
           "content:",
-          content.substring(0, 50)
+          content.substring(0, 50),
         );
         listMatches.push({ indent: indentLevel, content });
       }
@@ -74,7 +74,7 @@ function convertHtmlToDocx(html: string): Paragraph[] {
                 left: (item.indent + 1) * 360, // Base indent + additional indent per level (0.25 inch = 360 twips)
                 hanging: 360, // Hanging indent for bullet
               },
-            })
+            }),
           );
         }
         console.log("[v0] Created", listMatches.length, "list items");
@@ -98,7 +98,7 @@ function convertHtmlToDocx(html: string): Paragraph[] {
             text: text,
             heading: HeadingLevel.HEADING_3,
             spacing: { before: 200, after: 100 },
-          })
+          }),
         );
       }
       // Regular paragraph
@@ -109,7 +109,7 @@ function convertHtmlToDocx(html: string): Paragraph[] {
             new Paragraph({
               children: textRuns,
               spacing: { before: 100, after: 100 },
-            })
+            }),
           );
         }
       }
@@ -162,7 +162,7 @@ function parseInlineFormats(html: string): TextRun[] {
             bold: tag === "strong" || tag === "b",
             italics: tag === "em" || tag === "i",
             underline: tag === "u" ? {} : undefined,
-          })
+          }),
         );
       }
     } else if (match[3]) {
@@ -219,7 +219,7 @@ export async function POST(req: NextRequest) {
         heading: HeadingLevel.HEADING_1,
         alignment: AlignmentType.CENTER,
         spacing: { after: 400 },
-      })
+      }),
     );
 
     // Instructor Information Section
@@ -239,7 +239,7 @@ export async function POST(req: NextRequest) {
           text: "Instructor Information",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 200, after: 200 },
-        })
+        }),
       );
 
       sections.push(
@@ -491,7 +491,7 @@ export async function POST(req: NextRequest) {
               ],
             }),
           ],
-        })
+        }),
       );
     }
 
@@ -504,11 +504,11 @@ export async function POST(req: NextRequest) {
           children: [
             new TextRun({ text: "Teaching Assistants: ", bold: true }),
             new TextRun(
-              data.tas.map((ta: any) => `${ta.name} (${ta.email})`).join(", ")
+              data.tas.map((ta: any) => `${ta.name} (${ta.email})`).join(", "),
             ),
           ],
           spacing: { after: 200 },
-        })
+        }),
       );
     }
 
@@ -521,7 +521,7 @@ export async function POST(req: NextRequest) {
             new TextRun(data.course_mail_list),
           ],
           spacing: { after: 400 },
-        })
+        }),
       );
     }
 
@@ -532,7 +532,7 @@ export async function POST(req: NextRequest) {
           text: "Important Dates",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const importantDatesContent = convertHtmlToDocx(data.important_dates);
       sections.push(...importantDatesContent);
@@ -549,7 +549,7 @@ export async function POST(req: NextRequest) {
         new Paragraph({
           text: data.course_description,
           spacing: { after: 120 },
-        })
+        }),
       );
     }
 
@@ -560,7 +560,7 @@ export async function POST(req: NextRequest) {
           text: "Learning Outcomes",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const learningOutcomesContent = convertHtmlToDocx(data.learning_outcomes);
       sections.push(...learningOutcomesContent);
@@ -577,7 +577,7 @@ export async function POST(req: NextRequest) {
         new Paragraph({
           text: data.course_rationale,
           spacing: { after: 120 },
-        })
+        }),
       );
     }
 
@@ -588,7 +588,7 @@ export async function POST(req: NextRequest) {
           text: "Class Format and Course Communication",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const classFormatContent = convertHtmlToDocx(data.class_format);
       sections.push(...classFormatContent);
@@ -601,20 +601,70 @@ export async function POST(req: NextRequest) {
           text: "Evaluation Criteria",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
 
-      for (const item of data.evaluation_criteria) {
-        sections.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: `${item.name}: `, bold: true }),
-              new TextRun(item.percentage),
-            ],
-            spacing: { after: 60 },
-          })
-        );
+      // Build a table showing components and their percentages first
+      const evalRows: TableRow[] = [];
 
+      // Header row
+      evalRows.push(
+        new TableRow({
+          tableHeader: true,
+          children: [
+            new TableCell({
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text: "Component", bold: true })],
+                }),
+              ],
+              width: { size: 70, type: WidthType.PERCENTAGE },
+            }),
+            new TableCell({
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text: "Percentage", bold: true })],
+                  alignment: AlignmentType.CENTER,
+                }),
+              ],
+              width: { size: 30, type: WidthType.PERCENTAGE },
+            }),
+          ],
+        }),
+      );
+
+      // Data rows
+      for (const item of data.evaluation_criteria) {
+        evalRows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [new Paragraph({ text: item.name || "" })],
+                width: { size: 70, type: WidthType.PERCENTAGE },
+              }),
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [new TextRun({ text: item.percentage || "" })],
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
+                width: { size: 30, type: WidthType.PERCENTAGE },
+              }),
+            ],
+          }),
+        );
+      }
+
+      sections.push(
+        new Table({
+          width: { size: 50, type: WidthType.PERCENTAGE },
+          rows: evalRows,
+        }),
+      );
+
+      // After the table, include any item-level descriptions (preserve HTML formatting)
+      for (const item of data.evaluation_criteria) {
         if (item.description) {
           const descContent = convertHtmlToDocx(item.description);
           sections.push(...descContent);
@@ -629,7 +679,7 @@ export async function POST(req: NextRequest) {
           text: "Notes",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const notesContent = convertHtmlToDocx(data.notes);
       sections.push(...notesContent);
@@ -646,7 +696,7 @@ export async function POST(req: NextRequest) {
         new Paragraph({
           text: data.student_declaration,
           spacing: { after: 120 },
-        })
+        }),
       );
     }
 
@@ -657,7 +707,7 @@ export async function POST(req: NextRequest) {
           text: "Midterm and Final Exam Requirements",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const examContent = convertHtmlToDocx(data.exam_requirements);
       sections.push(...examContent);
@@ -670,10 +720,10 @@ export async function POST(req: NextRequest) {
           text: "Academic Standards",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const academicStandardsContent = convertHtmlToDocx(
-        data.academic_standards
+        data.academic_standards,
       );
       sections.push(...academicStandardsContent);
     }
@@ -685,7 +735,7 @@ export async function POST(req: NextRequest) {
           text: "Required Texts and Resources",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const textsContent = convertHtmlToDocx(data.required_texts);
       sections.push(...textsContent);
@@ -702,7 +752,7 @@ export async function POST(req: NextRequest) {
         new Paragraph({
           text: data.prerequisites,
           spacing: { after: 120 },
-        })
+        }),
       );
     }
 
@@ -713,7 +763,7 @@ export async function POST(req: NextRequest) {
           text: "Tentative List of Topics",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
       const topicsContent = convertHtmlToDocx(data.topics_list);
       sections.push(...topicsContent);
@@ -721,7 +771,6 @@ export async function POST(req: NextRequest) {
 
     // Policies
     if (data.policies) {
-
       if (data.policies.speakUpPolicy) {
         sections.push(
           new Paragraph({
@@ -730,27 +779,33 @@ export async function POST(req: NextRequest) {
             spacing: { before: 240, after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "1. Be Ready to Act:", bold: true })],
+            children: [
+              new TextRun({ text: "1. Be Ready to Act:", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
-            text: "This starts with promising yourself to speak up to help prevent it from happening again. Whatever it takes, summon your courage to address the issue. Try to approach the issue with open-ended questions like \"Why did you say that?\" or \"How did you develop that belief?\"",
+            text: 'This starts with promising yourself to speak up to help prevent it from happening again. Whatever it takes, summon your courage to address the issue. Try to approach the issue with open-ended questions like "Why did you say that?" or "How did you develop that belief?"',
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "2. Identify the Behaviour:", bold: true })],
+            children: [
+              new TextRun({ text: "2. Identify the Behaviour:", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
-            text: "Use reflective listening and avoid labeling, name-calling, or assigning blame to the person. Focus the conversation on the behaviour, not on the person. For example, \"The comment you just made sounded racist, is that what you intended?\" is a better approach than \"You're a racist if you make comments like that.\"",
+            text: 'Use reflective listening and avoid labeling, name-calling, or assigning blame to the person. Focus the conversation on the behaviour, not on the person. For example, "The comment you just made sounded racist, is that what you intended?" is a better approach than "You\'re a racist if you make comments like that."',
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "3. Appeal to Principles:", bold: true })],
+            children: [
+              new TextRun({ text: "3. Appeal to Principles:", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
-            text: "This can work well if the person is known to you, like a friend, sibling, or co-worker. For example, \"I have always thought of you as a fair-minded person, so it shocks me when I hear you say something like that.\"",
+            text: 'This can work well if the person is known to you, like a friend, sibling, or co-worker. For example, "I have always thought of you as a fair-minded person, so it shocks me when I hear you say something like that."',
             spacing: { after: 120 },
           }),
           new Paragraph({
@@ -758,11 +813,13 @@ export async function POST(req: NextRequest) {
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
-            text: "You cannot control another person's actions, but you can control what happens in your space. Do not be afraid to ask someone \"Please do not tell racist jokes in my presence anymore\" or state \"This classroom is not a place where I allow homophobia to occur.\" After you have set that expectation, make sure you consistently maintain it.",
+            text: 'You cannot control another person\'s actions, but you can control what happens in your space. Do not be afraid to ask someone "Please do not tell racist jokes in my presence anymore" or state "This classroom is not a place where I allow homophobia to occur." After you have set that expectation, make sure you consistently maintain it.',
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "5. Find or be an Ally:", bold: true })],
+            children: [
+              new TextRun({ text: "5. Find or be an Ally:", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -776,7 +833,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: "Change can happen slowly, but do not let this deter you. Stay prepared, keep speaking up, and do not let yourself be silenced.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -790,7 +847,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: "Every person has a right to respect and safety. We believe inclusiveness is fundamental to education and learning. Misogyny and other disrespectful behaviour in our classrooms, on our campus, on social media, and in our community is unacceptable. As a community, we must stand for equality and hold ourselves to a higher standard.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -804,7 +861,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: "Taking care of your health is important. As a Dalhousie student, you have access to a wide range of resources to support your health and wellbeing. Students looking to access physical or mental health and wellness services at Dalhousie can go to the Student Health and Wellness Centre in the LeMarchant Building. The team includes: registered nurses, doctors, counsellors and a social worker. Visit Student Health and Wellness to learn more and book an appointment today. Students also have access to a variety of online mental health resources, including telephone/texting counselling and workshops/training programs. Learn more and access these resources at Mental Health Services.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -818,7 +875,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: "You may use AI-driven tools to assist you in learning but remember that your objective is to understand, achieve, and apply the course competencies and outcomes. While you may use tools for learning, specific assessments in this course will disallow the use of AI-driven tools to assert that you have attained course learning outcomes. This is because a graduate must be able to analyze, assess and produce work unassisted by AI technology. Where tools are allowed: you must acknowledge all tools used to assist you. If applicable, you must provide links to chat logs. Using AI-driven tools where prohibited constitutes an academic offense.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -832,7 +889,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: "All submitted code may be passed through a plagiarism detection software, such as the plagiarism detector embedded in Codio, the Moss Software Similarity Detection System, or similar systems. If a student does not wish to have their assignments passed through plagiarism detection software, they should contact the instructor for an alternative. Please note, that code not passed through plagiarism detection software will necessarily receive closer scrutiny. See the Policy on Student Submission of Assignments and Use of Originality Checking Software for more information.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -846,7 +903,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: "Usage of all computing resources in the Faculty of Computer Science must be within the Dalhousie Acceptable Use Policies, and the Faculty of Computer Science Responsible Computing Policy.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -866,7 +923,9 @@ export async function POST(req: NextRequest) {
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Territorial Acknowledgement", bold: true })],
+            children: [
+              new TextRun({ text: "Territorial Acknowledgement", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -874,7 +933,9 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Internationalization", bold: true })],
+            children: [
+              new TextRun({ text: "Internationalization", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -898,7 +959,12 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Conduct in the Classroom — Culture of Respect", bold: true })],
+            children: [
+              new TextRun({
+                text: "Conduct in the Classroom — Culture of Respect",
+                bold: true,
+              }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -906,7 +972,12 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Diversity and Inclusion — Culture of Respect", bold: true })],
+            children: [
+              new TextRun({
+                text: "Diversity and Inclusion — Culture of Respect",
+                bold: true,
+              }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -914,7 +985,9 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Student Code of Conduct", bold: true })],
+            children: [
+              new TextRun({ text: "Student Code of Conduct", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -922,7 +995,9 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Fair Dealing Policy", bold: true })],
+            children: [
+              new TextRun({ text: "Fair Dealing Policy", bold: true }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -930,7 +1005,12 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Originality Checking Software", bold: true })],
+            children: [
+              new TextRun({
+                text: "Originality Checking Software",
+                bold: true,
+              }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -938,7 +1018,12 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Student Use of Course Materials", bold: true })],
+            children: [
+              new TextRun({
+                text: "Student Use of Course Materials",
+                bold: true,
+              }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
@@ -946,13 +1031,18 @@ export async function POST(req: NextRequest) {
             spacing: { after: 120 },
           }),
           new Paragraph({
-            children: [new TextRun({ text: "Learning and Support Resources", bold: true })],
+            children: [
+              new TextRun({
+                text: "Learning and Support Resources",
+                bold: true,
+              }),
+            ],
             spacing: { before: 100, after: 60 },
           }),
           new Paragraph({
             text: "Please see the Academic Support website.",
             spacing: { after: 120 },
-          })
+          }),
         );
       }
 
@@ -966,7 +1056,7 @@ export async function POST(req: NextRequest) {
           new Paragraph({
             text: data.policies.customPolicy,
             spacing: { after: 120 },
-          })
+          }),
         );
       }
     }
@@ -978,7 +1068,7 @@ export async function POST(req: NextRequest) {
           text: "Assignments",
           heading: HeadingLevel.HEADING_2,
           spacing: { before: 240, after: 120 },
-        })
+        }),
       );
 
       const assignmentRows = data.assignments.map((assignment: any) => {
@@ -1043,10 +1133,10 @@ export async function POST(req: NextRequest) {
             }),
             ...assignmentRows,
           ],
-        })
+        }),
       );
     }
-    
+
     const doc = new Document({
       sections: [
         {
@@ -1079,7 +1169,7 @@ export async function POST(req: NextRequest) {
         error: error.message || "Internal server error",
         details: error.stack,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
