@@ -44,6 +44,33 @@ interface Policies {
   customPolicy: string;
 }
 
+const PRESET_COMPONENTS = [
+  { key: "assignment", label: "Assignment" },
+  { key: "exam", label: "Exam" },
+  { key: "lab", label: "Lab" },
+  { key: "tutorial", label: "Tutorial" },
+  { key: "project", label: "Project" },
+] as const;
+
+type EvalComponentType = string;
+
+interface EvalSubItem {
+  name: string;
+  percentage: string;
+  description: string;
+}
+
+interface EvalComponent {
+  key: EvalComponentType;
+  label: string;
+  enabled: boolean;
+  percentage: string;
+  description: string;
+  subItems: EvalSubItem[];
+  isCustom?: boolean;
+}
+
+
 export default function SyllabusGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -166,6 +193,17 @@ export default function SyllabusGenerator() {
   const handleGenerateSyllabus = async () => {
     setIsGenerating(true);
     try {
+      const evaluationCriteriaForExport = evalComponents
+        .filter((c) => c.enabled)
+        .map((c) => ({
+          name: c.label,
+          percentage: c.percentage,
+          description: c.description,
+          subItems: c.subItems,
+          isCustom: c.isCustom,
+        }));
+
+
       const formData = {
         course_number: courseNumber,
         course_name: courseName,
@@ -188,9 +226,7 @@ export default function SyllabusGenerator() {
         learning_outcomes: learningOutcomes,
         course_rationale: courseRationale,
         class_format: classFormat,
-        evaluation_criteria: evaluationCriteria.filter(
-          (item) => item.name || item.percentage || item.description,
-        ),
+        evaluation_criteria: evaluationCriteriaForExport,
         policies,
         notes,
         student_declaration: studentDeclaration,
@@ -233,6 +269,105 @@ export default function SyllabusGenerator() {
       setIsGenerating(false);
     }
   };
+
+  // Evaluation Criteria State
+  const [evalComponents, setEvalComponents] = useState<EvalComponent[]>(
+    PRESET_COMPONENTS.map((c) => ({
+      ...c,
+      enabled: false,
+      percentage: "",
+      description: "",
+      subItems: [],
+      isCustom: false,
+    }))
+  );
+  const [newCustomName, setNewCustomName] = useState("");
+
+  // Handlers
+  const handleComponentToggle = (idx: number, enabled: boolean) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => (i === idx ? { ...c, enabled } : c))
+    );
+  };
+
+  const handleComponentPercentage = (idx: number, value: string) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => (i === idx ? { ...c, percentage: value } : c))
+    );
+  };
+
+  const addSubItem = (idx: number) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) =>
+        i === idx
+          ? {
+              ...c,
+              subItems: [...c.subItems, { name: "", percentage: "", description: "" }],
+            }
+          : c
+      )
+    );
+  };
+
+  const updateSubItem = (
+    idx: number,
+    subIdx: number,
+    field: keyof EvalSubItem,
+    value: string
+  ) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => {
+        if (i !== idx) return c;
+        const subItems = [...c.subItems];
+        subItems[subIdx][field] = value;
+        return { ...c, subItems };
+      })
+    );
+  };
+
+  const removeSubItem = (idx: number, subIdx: number) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => {
+        if (i !== idx) return c;
+        return {
+          ...c,
+          subItems: c.subItems.filter((_, j) => j !== subIdx),
+        };
+      })
+    );
+  };
+
+  const addCustomComponent = () => {
+    if (
+      newCustomName.trim() &&
+      !evalComponents.some(
+        (c) => c.label.toLowerCase() === newCustomName.trim().toLowerCase()
+      )
+    ) {
+      setEvalComponents([
+        ...evalComponents,
+        {
+          key: newCustomName.trim().toLowerCase().replace(/\s+/g, "-"),
+          label: newCustomName.trim(),
+          enabled: true,
+          percentage: "",
+          description: "",
+          subItems: [],
+          isCustom: true,
+        },
+      ]);
+      setNewCustomName("");
+    }
+  };
+
+  const removeCustomComponent = (idx: number) => {
+    setEvalComponents((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const totalPercentage = evalComponents.reduce(
+    (sum, c) => (c.enabled ? sum + Number(c.percentage || 0) : sum),
+    0
+  );
 
   return (
     <main className="max-w-7xl px-3 py-6 m-auto bg-gradient-to-br from-background to-secondary/10">
@@ -533,94 +668,170 @@ export default function SyllabusGenerator() {
           {/* Evaluation Criteria */}
           <Card className="border-border shadow-sm">
             <CardHeader>
-              <CardTitle className="text-foreground">
-                Evaluation Criteria
-              </CardTitle>
-              <CardDescription>How students will be evaluated</CardDescription>
+              <CardTitle className="text-foreground">Evaluation Criteria</CardTitle>
+              <CardDescription>
+                How students will be evaluated
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {evaluationCriteria.map((item, index) => (
-                <div key={index} className="mb-4">
-                  <div className="flex-1 space-y-4">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor={`eval-name-${index}`}>
-                          Component Name
-                        </Label>
-                        <Input
-                          id={`eval-name-${index}`}
-                          value={item.name}
-                          onChange={(e) =>
-                            updateEvaluationItem(
-                              index,
-                              "name",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="Assignments"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`eval-percentage-${index}`}>
-                          Percentage
-                        </Label>
-                        <Input
-                          id={`eval-percentage-${index}`}
-                          value={item.percentage}
-                          onChange={(e) =>
-                            updateEvaluationItem(
-                              index,
-                              "percentage",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="40%"
-                        />
-                      </div>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                {evalComponents.map((c, idx) => (
+                  <div key={c.key} className="space-y-2 border-b border-neutral-200 pb-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`eval-${c.key}`}
+                        checked={c.enabled}
+                        onCheckedChange={(checked) =>
+                          handleComponentToggle(idx, checked as boolean)
+                        }
+                      />
+                      <label htmlFor={`eval-${c.key}`} className="font-medium">
+                        {c.label}
+                      </label>
+
+                      {c.enabled && (
+                        <>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            step={1}
+                            className="w-24 ml-4"
+                            placeholder="%"
+                            value={c.percentage}
+                            onChange={(e) =>
+                              handleComponentPercentage(idx, e.target.value)
+                            }
+                          />
+
+                          <span className="ml-2">%</span>
+                        </>
+                      )}
+
+                      {c.isCustom && (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          className="ml-2"
+                          onClick={() => removeCustomComponent(idx)}
+                          aria-label="Remove custom component"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor={`eval-description-${index}`}>
-                        Description
-                      </Label>
+
+                    {c.enabled && (
                       <Textarea
-                        id={`eval-description-${index}`}
-                        value={item.description}
+                        className="mt-4 mb-8 w-full"
+                        placeholder={`Description for ${c.label}`}
+                        value={c.description}
                         onChange={(e) =>
-                          updateEvaluationItem(
-                            index,
-                            "description",
-                            e.target.value,
+                          setEvalComponents((prev) =>
+                            prev.map((comp, i) =>
+                              i === idx
+                                ? { ...comp, description: e.target.value }
+                                : comp
+                            )
                           )
                         }
-                        placeholder="Details about this evaluation component..."
                         rows={2}
                       />
-                    </div>
-                    <div className="flex justify-center mt-2">
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        onClick={() => removeEvaluationItem(index)}
-                        disabled={evaluationCriteria.length === 1}
-                        className="mb-3"
-                      >
-                        Remove Component
-                      </Button>
-                    </div>
-                    <hr className="border-t border-neutral-400 mb-8" />
-                  </div>
-                </div>
-              ))}
+                    )}
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addEvaluationItem}
-                className="w-full bg-transparent"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Evaluation Item
-              </Button>
+                    {c.enabled && (
+                      <div className="ml-8 space-y-2">
+                        {c.subItems.map((sub, subIdx) => (
+                          <div key={subIdx} className="mb-4">
+                            <div className="flex items-center space-x-6">
+                              <Input
+                                className="w-48"
+                                placeholder={`${c.label} ${subIdx + 1} Name`}
+                                value={sub.name}
+                                onChange={(e) =>
+                                  updateSubItem(idx, subIdx, "name", e.target.value)
+                                }
+                              />
+                              <Input
+                                type="number"
+                                min={0}
+                                max={100}
+                                step={1}
+                                className="w-20"
+                                placeholder="%"
+                                value={sub.percentage}
+                                onChange={(e) =>
+                                  updateSubItem(idx, subIdx, "percentage", e.target.value)
+                                }
+                              />
+                              <span>%</span>
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="destructive"
+                                onClick={() => removeSubItem(idx, subIdx)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <Textarea
+                              className="mt-4 mb-8 w-full"
+                              placeholder={`Description for ${sub.name || `${c.label} ${subIdx + 1}`}`}
+                              value={sub.description}
+                              onChange={(e) =>
+                                updateSubItem(idx, subIdx, "description", e.target.value)
+                              }
+                              rows={2}
+                            />
+                          </div>
+                        ))}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addSubItem(idx)}
+                          className="mt-1"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add {c.label}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Add custom component */}
+              <div className="flex items-center space-x-2">
+                <Input
+                  className="w-64"
+                  placeholder="Add Evaluation Component"
+                  value={newCustomName}
+                  onChange={(e) => setNewCustomName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addCustomComponent();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={addCustomComponent}
+                  disabled={!newCustomName.trim()}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Component
+                </Button>
+              </div>
+              {/* Total */}
+              <div className="font-semibold">
+                Total: {totalPercentage}%{" "}
+                {totalPercentage !== 100 && (
+                  <span className="text-destructive ml-2">Total must be 100%</span>
+                )}
+              </div>
             </CardContent>
           </Card>
 

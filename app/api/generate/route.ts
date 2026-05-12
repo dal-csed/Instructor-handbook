@@ -605,20 +605,73 @@ export async function POST(req: NextRequest) {
       );
 
       for (const item of data.evaluation_criteria) {
+        // Print main component name and percentage
         sections.push(
           new Paragraph({
             children: [
               new TextRun({ text: `${item.name}: `, bold: true }),
-              new TextRun(item.percentage),
+              new TextRun(item.percentage + "%"),
             ],
             spacing: { after: 60 },
           })
         );
 
+        // Print main component description above the table, if present
         if (item.description) {
           const descContent = convertHtmlToDocx(item.description);
           sections.push(...descContent);
         }
+
+        // If subItems exist, add a table with black solid borders and description column
+        if (item.subItems && item.subItems.length > 0) {
+          sections.push(
+            new Table({
+              width: { size: 60, type: WidthType.PERCENTAGE },
+              borders: {
+                top: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                bottom: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                left: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                right: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+              },
+              rows: [
+                new TableRow({
+                  tableHeader: true,
+                  children: [
+                    new TableCell({
+                      children: [new Paragraph({ children: [new TextRun({ text: "Assessment", bold: true })] })],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph({ children: [new TextRun({ text: "Weight", bold: true })] })],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph({ children: [new TextRun({ text: "Description", bold: true })] })],
+                    }),
+                  ],
+                }),
+                ...item.subItems.map((sub: any) =>
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [new Paragraph(sub.name || "")],
+                      }),
+                      new TableCell({
+                        children: [new Paragraph((sub.percentage || "") + "%")],
+                      }),
+                      new TableCell({
+                        children: [new Paragraph(sub.description || "")],
+                      }),
+                    ],
+                  })
+                ),
+              ],
+            })
+          );
+        }
+
+        // Add space after each evaluation component
+        sections.push(new Paragraph({ text: "", spacing: { after: 200 } }));
       }
     }
 
