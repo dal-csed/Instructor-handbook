@@ -41,6 +41,8 @@ const Items = [
   }
 ]
 
+// test comment for the github repo
+
 const TechTips = () => {
   return (
     <div className="max-w-7xl mx-auto px-3 py-12">
