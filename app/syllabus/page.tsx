@@ -52,6 +52,33 @@ interface Policies {
   customPolicy: string;
 }
 
+const PRESET_COMPONENTS = [
+  { key: "assignment", label: "Assignment" },
+  { key: "exam", label: "Exam" },
+  { key: "lab", label: "Lab" },
+  { key: "tutorial", label: "Tutorial" },
+  { key: "project", label: "Project" },
+] as const;
+
+type EvalComponentType = string;
+
+interface EvalSubItem {
+  name: string;
+  percentage: string;
+  description: string;
+}
+
+interface EvalComponent {
+  key: EvalComponentType;
+  label: string;
+  enabled: boolean;
+  percentage: string;
+  description: string;
+  subItems: EvalSubItem[];
+  isCustom?: boolean;
+}
+
+
 export default function SyllabusGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -288,6 +315,17 @@ export default function SyllabusGenerator() {
   const handleGenerateSyllabus = async () => {
     setIsGenerating(true);
     try {
+      const evaluationCriteriaForExport = evalComponents
+        .filter((c) => c.enabled)
+        .map((c) => ({
+          name: c.label,
+          percentage: c.percentage,
+          description: c.description,
+          subItems: c.subItems,
+          isCustom: c.isCustom,
+        }));
+
+
       const formData = {
         course_number: courseNumber,
         course_name: courseName,
@@ -359,6 +397,105 @@ export default function SyllabusGenerator() {
       setIsGenerating(false);
     }
   };
+
+  // Evaluation Criteria State
+  const [evalComponents, setEvalComponents] = useState<EvalComponent[]>(
+    PRESET_COMPONENTS.map((c) => ({
+      ...c,
+      enabled: false,
+      percentage: "",
+      description: "",
+      subItems: [],
+      isCustom: false,
+    }))
+  );
+  const [newCustomName, setNewCustomName] = useState("");
+
+  // Handlers
+  const handleComponentToggle = (idx: number, enabled: boolean) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => (i === idx ? { ...c, enabled } : c))
+    );
+  };
+
+  const handleComponentPercentage = (idx: number, value: string) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => (i === idx ? { ...c, percentage: value } : c))
+    );
+  };
+
+  const addSubItem = (idx: number) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) =>
+        i === idx
+          ? {
+              ...c,
+              subItems: [...c.subItems, { name: "", percentage: "", description: "" }],
+            }
+          : c
+      )
+    );
+  };
+
+  const updateSubItem = (
+    idx: number,
+    subIdx: number,
+    field: keyof EvalSubItem,
+    value: string
+  ) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => {
+        if (i !== idx) return c;
+        const subItems = [...c.subItems];
+        subItems[subIdx][field] = value;
+        return { ...c, subItems };
+      })
+    );
+  };
+
+  const removeSubItem = (idx: number, subIdx: number) => {
+    setEvalComponents((prev) =>
+      prev.map((c, i) => {
+        if (i !== idx) return c;
+        return {
+          ...c,
+          subItems: c.subItems.filter((_, j) => j !== subIdx),
+        };
+      })
+    );
+  };
+
+  const addCustomComponent = () => {
+    if (
+      newCustomName.trim() &&
+      !evalComponents.some(
+        (c) => c.label.toLowerCase() === newCustomName.trim().toLowerCase()
+      )
+    ) {
+      setEvalComponents([
+        ...evalComponents,
+        {
+          key: newCustomName.trim().toLowerCase().replace(/\s+/g, "-"),
+          label: newCustomName.trim(),
+          enabled: true,
+          percentage: "",
+          description: "",
+          subItems: [],
+          isCustom: true,
+        },
+      ]);
+      setNewCustomName("");
+    }
+  };
+
+  const removeCustomComponent = (idx: number) => {
+    setEvalComponents((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const totalPercentage = evalComponents.reduce(
+    (sum, c) => (c.enabled ? sum + Number(c.percentage || 0) : sum),
+    0
+  );
 
   return (
     <main className="max-w-7xl px-3 py-6 m-auto bg-gradient-to-br from-background to-secondary/10">
