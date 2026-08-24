@@ -1,0 +1,16 @@
+[
+  { "phrase": "Course Description", "required": true },
+  { "phrase": "Learning Outcome", "required": true },
+  { "phrase": "Instructor Information", "required": true },
+  { "phrase": "Communication", "required": true },
+  { "phrase": "Assessment", "required": true },
+  { "phrase": "Evaluation", "required": true },
+  { "phrase": "Schedule", "required": true },
+  { "phrase": "Prerequisite", "required": false },
+  { "phrase": "Teaching Assistant", "required": false },
+  { "phrase": "Time", "required": false },
+  { "phrase": "Location", "required": false },
+  { "phrase": "Lab Schedule", "required": false },
+  { "phrase": "Tutorial Schedule", "required": false },
+  { "phrase": "Resources & Tools", "required": false }
+]

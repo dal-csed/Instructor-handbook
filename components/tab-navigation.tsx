@@ -10,6 +10,7 @@ const tabs = [
   { name: "Educational posters and infographics", href: "/services" },
   { name: "Tech Tips", href: "/techTips" },
   { name: "Syllabus Generator", href: "/syllabus" },
+  { name: "Syllabus Checker", href: "/syllabus-checker" },
   { name: "Resources", href: "/resources" },
   { name: "Contact", href: "/contact" },
 ];
