@@ -27,10 +27,18 @@ interface Assignment {
   description: string;
 }
 
-interface EvaluationItem {
+interface EvaluationComponent {
   name: string;
   percentage: string;
   description: string;
+}
+
+interface EvaluationCategory {
+  id: string;
+  label: string;
+  percentage: string;
+  enabled: boolean;
+  components: EvaluationComponent[];
 }
 
 interface Policies {
@@ -95,9 +103,52 @@ export default function SyllabusGenerator() {
   const [assignments, setAssignments] = useState<Assignment[]>([
     { title: "", date: "", description: "" },
   ]);
-  const [evaluationCriteria, setEvaluationCriteria] = useState<
-    EvaluationItem[]
-  >([{ name: "", percentage: "", description: "" }]);
+  const [evaluationCategories, setEvaluationCategories] = useState<
+    EvaluationCategory[]
+  >([
+    {
+      id: "assignments",
+      label: "Assignments",
+      percentage: "",
+      enabled: false,
+      components: [],
+    },
+    {
+      id: "labs",
+      label: "Labs",
+      percentage: "",
+      enabled: false,
+      components: [],
+    },
+    {
+      id: "quizzes",
+      label: "Quizzes",
+      percentage: "",
+      enabled: false,
+      components: [],
+    },
+    {
+      id: "midterm",
+      label: "Midterm",
+      percentage: "",
+      enabled: false,
+      components: [],
+    },
+    {
+      id: "final",
+      label: "Final",
+      percentage: "",
+      enabled: false,
+      components: [],
+    },
+    {
+      id: "others",
+      label: "Others",
+      percentage: "",
+      enabled: false,
+      components: [],
+    },
+  ]);
 
   // Policies
   const [policies, setPolicies] = useState<Policies>({
@@ -163,27 +214,98 @@ export default function SyllabusGenerator() {
     setAssignments(newAssignments);
   };
 
+  const toggleEvaluationCategory = (categoryId: string) => {
+    setEvaluationCategories(
+      evaluationCategories.map((cat) =>
+        cat.id === categoryId
+          ? {
+              ...cat,
+              enabled: !cat.enabled,
+              components:
+                !cat.enabled && cat.components.length === 0
+                  ? [{ name: "", percentage: "", description: "" }]
+                  : cat.components,
+            }
+          : cat,
+      ),
+    );
+  };
+
+  const addComponentToCategory = (categoryId: string) => {
+    setEvaluationCategories(
+      evaluationCategories.map((cat) =>
+        cat.id === categoryId
+          ? {
+              ...cat,
+              components: [
+                ...cat.components,
+                { name: "", percentage: "", description: "" },
+              ],
+            }
+          : cat,
+      ),
+    );
+  };
+
+  const removeComponentFromCategory = (categoryId: string, index: number) => {
+    // Don't allow removing the first component (the default)
+    if (index === 0) {
+      return;
+    }
+    setEvaluationCategories(
+      evaluationCategories.map((cat) =>
+        cat.id === categoryId
+          ? {
+              ...cat,
+              components: cat.components.filter((_, i) => i !== index),
+            }
+          : cat,
+      ),
+    );
+  };
+
+  const updateComponentInCategory = (
+    categoryId: string,
+    componentIndex: number,
+    field: keyof EvaluationComponent,
+    value: string,
+  ) => {
+    setEvaluationCategories(
+      evaluationCategories.map((cat) =>
+        cat.id === categoryId
+          ? {
+              ...cat,
+              components: cat.components.map((comp, i) =>
+                i === componentIndex ? { ...comp, [field]: value } : comp,
+              ),
+            }
+          : cat,
+      ),
+    );
+  };
+
+  const updateCategoryPercentage = (categoryId: string, percentage: string) => {
+    setEvaluationCategories(
+      evaluationCategories.map((cat) =>
+        cat.id === categoryId ? { ...cat, percentage } : cat,
+      ),
+    );
+  };
+
   const addEvaluationItem = () => {
-    setEvaluationCriteria([
-      ...evaluationCriteria,
-      { name: "", percentage: "", description: "" },
-    ]);
+    // This function is no longer needed but kept for compatibility
   };
 
   const removeEvaluationItem = (index: number) => {
-    if (evaluationCriteria.length > 1) {
-      setEvaluationCriteria(evaluationCriteria.filter((_, i) => i !== index));
-    }
+    // This function is no longer needed but kept for compatibility
   };
 
   const updateEvaluationItem = (
     index: number,
-    field: keyof EvaluationItem,
+    field: string,
     value: string,
   ) => {
-    const newItems = [...evaluationCriteria];
-    newItems[index][field] = value;
-    setEvaluationCriteria(newItems);
+    // This function is no longer needed but kept for compatibility
   };
 
   const updatePolicy = (field: keyof Policies, value: boolean | string) => {
@@ -226,7 +348,13 @@ export default function SyllabusGenerator() {
         learning_outcomes: learningOutcomes,
         course_rationale: courseRationale,
         class_format: classFormat,
-        evaluation_criteria: evaluationCriteriaForExport,
+        evaluation_criteria: evaluationCategories
+          .filter((cat) => cat.enabled)
+          .flatMap((cat) =>
+            cat.components.filter(
+              (comp) => comp.name || comp.percentage || comp.description,
+            ),
+          ),
         policies,
         notes,
         student_declaration: studentDeclaration,
@@ -573,8 +701,6 @@ export default function SyllabusGenerator() {
                   </div>
                 </div>
               ))}
-  
-
 
               <Button
                 type="button"
@@ -585,7 +711,6 @@ export default function SyllabusGenerator() {
                 <Plus className="h-4 w-4 mr-2" />
                 Add Teaching Assistant
               </Button>
-
             </CardContent>
           </Card>
 
@@ -668,170 +793,180 @@ export default function SyllabusGenerator() {
           {/* Evaluation Criteria */}
           <Card className="border-border shadow-sm">
             <CardHeader>
-              <CardTitle className="text-foreground">Evaluation Criteria</CardTitle>
+              <CardTitle className="text-foreground">
+                Evaluation Criteria
+              </CardTitle>
               <CardDescription>
-                How students will be evaluated
+                Select evaluation categories and add components
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                {evalComponents.map((c, idx) => (
-                  <div key={c.key} className="space-y-2 border-b border-neutral-200 pb-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`eval-${c.key}`}
-                        checked={c.enabled}
-                        onCheckedChange={(checked) =>
-                          handleComponentToggle(idx, checked as boolean)
-                        }
-                      />
-                      <label htmlFor={`eval-${c.key}`} className="font-medium">
-                        {c.label}
-                      </label>
-
-                      {c.enabled && (
-                        <>
-                          <Input
-                            type="number"
-                            min={0}
-                            max={100}
-                            step={1}
-                            className="w-24 ml-4"
-                            placeholder="%"
-                            value={c.percentage}
-                            onChange={(e) =>
-                              handleComponentPercentage(idx, e.target.value)
-                            }
-                          />
-
-                          <span className="ml-2">%</span>
-                        </>
-                      )}
-
-                      {c.isCustom && (
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="destructive"
-                          className="ml-2"
-                          onClick={() => removeCustomComponent(idx)}
-                          aria-label="Remove custom component"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-
-                    {c.enabled && (
-                      <Textarea
-                        className="mt-4 mb-8 w-full"
-                        placeholder={`Description for ${c.label}`}
-                        value={c.description}
-                        onChange={(e) =>
-                          setEvalComponents((prev) =>
-                            prev.map((comp, i) =>
-                              i === idx
-                                ? { ...comp, description: e.target.value }
-                                : comp
-                            )
-                          )
-                        }
-                        rows={2}
-                      />
-                    )}
-
-                    {c.enabled && (
-                      <div className="ml-8 space-y-2">
-                        {c.subItems.map((sub, subIdx) => (
-                          <div key={subIdx} className="mb-4">
-                            <div className="flex items-center space-x-6">
-                              <Input
-                                className="w-48"
-                                placeholder={`${c.label} ${subIdx + 1} Name`}
-                                value={sub.name}
-                                onChange={(e) =>
-                                  updateSubItem(idx, subIdx, "name", e.target.value)
-                                }
-                              />
-                              <Input
-                                type="number"
-                                min={0}
-                                max={100}
-                                step={1}
-                                className="w-20"
-                                placeholder="%"
-                                value={sub.percentage}
-                                onChange={(e) =>
-                                  updateSubItem(idx, subIdx, "percentage", e.target.value)
-                                }
-                              />
-                              <span>%</span>
-                              <Button
-                                type="button"
-                                size="icon"
-                                variant="destructive"
-                                onClick={() => removeSubItem(idx, subIdx)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Textarea
-                              className="mt-4 mb-8 w-full"
-                              placeholder={`Description for ${sub.name || `${c.label} ${subIdx + 1}`}`}
-                              value={sub.description}
-                              onChange={(e) =>
-                                updateSubItem(idx, subIdx, "description", e.target.value)
-                              }
-                              rows={2}
-                            />
-                          </div>
-                        ))}
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => addSubItem(idx)}
-                          className="mt-1"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add {c.label}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {/* Add custom component */}
-              <div className="flex items-center space-x-2">
-                <Input
-                  className="w-64"
-                  placeholder="Add Evaluation Component"
-                  value={newCustomName}
-                  onChange={(e) => setNewCustomName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addCustomComponent();
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="default"
-                  onClick={addCustomComponent}
-                  disabled={!newCustomName.trim()}
+            <CardContent className="space-y-3">
+              {evaluationCategories.map((category) => (
+                <div
+                  key={category.id}
+                  className="items-center border rounded-sm p-4"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Component
-                </Button>
-              </div>
-              {/* Total */}
-              <div className="font-semibold">
-                Total: {totalPercentage}%{" "}
-                {totalPercentage !== 100 && (
-                  <span className="text-destructive ml-2">Total must be 100%</span>
-                )}
-              </div>
+                  {/* Category Checkbox */}
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id={`category-${category.id}`}
+                      checked={category.enabled}
+                      onCheckedChange={() =>
+                        toggleEvaluationCategory(category.id)
+                      }
+                    />
+                    <Label
+                      htmlFor={`category-${category.id}`}
+                      className="font-semibold cursor-pointer"
+                    >
+                      {category.label}
+                    </Label>
+                  </div>
+
+                  {/* Category Percentage */}
+                  {category.enabled && (
+                    <div className="ml-6 gap-3 my-3">
+                      {/* <div className="md:col-span-2"></div> */}
+                      <div className="space-y-1">
+                        <Label
+                          htmlFor={`category-percentage-${category.id}`}
+                          className="text-sm font-medium"
+                        >
+                          Criteria Percentage
+                        </Label>
+                        <Input
+                          id={`category-percentage-${category.id}`}
+                          value={category.percentage}
+                          onChange={(e) =>
+                            updateCategoryPercentage(
+                              category.id,
+                              e.target.value,
+                            )
+                          }
+                          placeholder="e.g., 40%"
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Components within category */}
+                  {category.enabled && (
+                    <div className="ml-6 space-y-4">
+                      {category.components.length === 0 ? (
+                        <p className="text-sm text-muted-foreground italic">
+                          No components added yet
+                        </p>
+                      ) : (
+                        category.components.map((component, compIndex) => (
+                          <div
+                            key={compIndex}
+                            className="bg-muted p-3 rounded-md space-y-3 border border-border"
+                          >
+                            <div className="grid md:grid-cols-3 gap-3">
+                              <div className="md:col-span-2 space-y-1">
+                                <Label
+                                  htmlFor={`comp-name-${category.id}-${compIndex}`}
+                                  className="text-xs"
+                                >
+                                  Component Name
+                                </Label>
+                                <Input
+                                  id={`comp-name-${category.id}-${compIndex}`}
+                                  value={component.name}
+                                  onChange={(e) =>
+                                    updateComponentInCategory(
+                                      category.id,
+                                      compIndex,
+                                      "name",
+                                      e.target.value,
+                                    )
+                                  }
+                                  placeholder="e.g., Programming Assignment 1"
+                                  className="text-sm"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <Label
+                                  htmlFor={`comp-percentage-${category.id}-${compIndex}`}
+                                  className="text-xs"
+                                >
+                                  Percentage
+                                </Label>
+                                <Input
+                                  id={`comp-percentage-${category.id}-${compIndex}`}
+                                  value={component.percentage}
+                                  onChange={(e) =>
+                                    updateComponentInCategory(
+                                      category.id,
+                                      compIndex,
+                                      "percentage",
+                                      e.target.value,
+                                    )
+                                  }
+                                  placeholder="15%"
+                                  className="text-sm"
+                                />
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <Label
+                                htmlFor={`comp-desc-${category.id}-${compIndex}`}
+                                className="text-xs"
+                              >
+                                Description
+                              </Label>
+                              <Textarea
+                                id={`comp-desc-${category.id}-${compIndex}`}
+                                value={component.description}
+                                onChange={(e) =>
+                                  updateComponentInCategory(
+                                    category.id,
+                                    compIndex,
+                                    "description",
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder="Details about this component..."
+                                rows={2}
+                                className="text-sm"
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() =>
+                                removeComponentFromCategory(
+                                  category.id,
+                                  compIndex,
+                                )
+                              }
+                              disabled={compIndex === 0}
+                              className="w-full"
+                            >
+                              <Trash2 className="h-3 w-3 mr-2" />
+                              Remove Component
+                            </Button>
+                          </div>
+                        ))
+                      )}
+
+                      {/* Add Component Button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addComponentToCategory(category.id)}
+                        className="w-full"
+                      >
+                        <Plus className="h-3 w-3 mr-2" />
+                        Add Component to {category.label}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
             </CardContent>
           </Card>
 
